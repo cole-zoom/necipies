@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Mail, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -10,19 +10,23 @@ import { toast } from "sonner";
 export function SignIn() {
   const { user, signInWithEmail } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const fromState = (location.state as { from?: string; reason?: string } | null) ?? null;
+  const returnTo = fromState?.from ?? "/cookbook";
+  const reason = fromState?.reason;
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (user) navigate("/cookbook");
-  }, [user, navigate]);
+    if (user) navigate(returnTo, { replace: true });
+  }, [user, navigate, returnTo]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
     setBusy(true);
-    const { error } = await signInWithEmail(email);
+    const { error } = await signInWithEmail(email, returnTo);
     setBusy(false);
     if (error) {
       toast.error(error.message);
@@ -37,9 +41,11 @@ export function SignIn() {
         <div className="size-10 grid place-items-center rounded-xl bg-ember-100 text-ember-700 mb-4">
           <Mail />
         </div>
-        <h1 className="font-serif text-3xl tracking-tight">Sign in</h1>
+        <h1 className="font-semibold text-3xl tracking-tight">Sign in</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Magic links only — no passwords to remember.
+          {reason === "new-recipe"
+            ? "Sign in to publish a recipe — your cookbook lives behind your email."
+            : "Magic links only — no passwords to remember."}
         </p>
 
         {sent ? (

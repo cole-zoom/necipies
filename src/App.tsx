@@ -4,7 +4,6 @@ import { Toaster } from "sonner";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { MobileNav } from "@/components/layout/MobileNav";
-import { DisclaimerBanner } from "@/components/layout/DisclaimerBanner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Home } from "@/pages/Home";
 import { Discover } from "@/pages/Discover";
@@ -34,7 +33,6 @@ export default function App() {
     <TooltipProvider delayDuration={200}>
       <PageViews />
       <div className="min-h-dvh flex flex-col">
-        <DisclaimerBanner />
         <Navbar />
         <main className="flex-1 pb-24 md:pb-0">
           <Routes>

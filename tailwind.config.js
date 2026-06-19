@@ -10,6 +10,9 @@ export default {
     },
     extend: {
       fontFamily: {
+        // Single typeface across the entire app. `serif` and `mono` are
+        // aliased to Inter so any stray font-serif/font-mono utility falls
+        // back to the same family rather than rendering Times/Courier.
         sans: [
           "Inter",
           "ui-sans-serif",
@@ -20,8 +23,18 @@ export default {
           "Arial",
           "sans-serif",
         ],
-        serif: ["'Instrument Serif'", "Georgia", "Cambria", "serif"],
-        mono: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+        serif: [
+          "Inter",
+          "ui-sans-serif",
+          "system-ui",
+          "sans-serif",
+        ],
+        mono: [
+          "Inter",
+          "ui-sans-serif",
+          "system-ui",
+          "sans-serif",
+        ],
       },
       colors: {
         border: "hsl(var(--border))",

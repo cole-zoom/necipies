@@ -14,7 +14,7 @@ export function ShareButton({ title, slug }: { title: string; slug: string }) {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `${title} — Necepies`,
+          title: `${title} — Necipies`,
           text: `Check out this recipe: ${title}`,
           url,
         });

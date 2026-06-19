@@ -24,7 +24,7 @@ export function RecipeGrid({ recipes, loading, empty }: Props) {
   }
   if (!recipes.length) {
     return (
-      <div className="surface p-10 text-center animate-fade-in">
+      <div className="rounded-2xl border border-dashed border-border/80 px-6 py-14 text-center animate-fade-in">
         {empty ?? (
           <p className="text-muted-foreground">
             No recipes yet. Be the first to add one.

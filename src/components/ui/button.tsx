@@ -3,6 +3,10 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
+// UI rule: when two or more buttons sit beside each other (toolbar, navbar
+// cluster, form footer), they MUST share the same `size` variant so their
+// heights match. Mixing `sm` (h-8) with `default` (h-10) creates a ragged
+// baseline. Different variants (default/outline/ghost) are fine — sizes are not.
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-medium transition-all duration-150 ring-focus disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0 select-none",
   {

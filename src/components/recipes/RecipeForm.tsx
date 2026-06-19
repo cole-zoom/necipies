@@ -182,7 +182,7 @@ export function RecipeForm({ initial }: { initial?: Partial<Recipe> }) {
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
             placeholder="Grandma's apple pie"
-            className="h-12 text-lg font-serif"
+            className="h-12 text-lg font-medium tracking-tight"
           />
         </div>
         <div className="space-y-1.5">
@@ -296,7 +296,7 @@ export function RecipeForm({ initial }: { initial?: Partial<Recipe> }) {
 
       <section className="space-y-3">
         <div className="flex items-center justify-between">
-          <Label className="text-base font-serif text-foreground">Ingredients</Label>
+          <Label className="text-base font-semibold tracking-tight text-foreground">Ingredients</Label>
           <Button type="button" size="sm" variant="ghost" onClick={() => addItem("ingredients")}>
             <Plus className="size-4" /> Add
           </Button>
@@ -326,7 +326,7 @@ export function RecipeForm({ initial }: { initial?: Partial<Recipe> }) {
 
       <section className="space-y-3">
         <div className="flex items-center justify-between">
-          <Label className="text-base font-serif text-foreground">Steps</Label>
+          <Label className="text-base font-semibold tracking-tight text-foreground">Steps</Label>
           <Button type="button" size="sm" variant="ghost" onClick={() => addItem("steps")}>
             <Plus className="size-4" /> Add
           </Button>

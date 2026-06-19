@@ -48,7 +48,7 @@ export function RecipeDetail() {
   if (missing || !recipe) {
     return (
       <div className="container py-20 max-w-md text-center">
-        <h1 className="font-serif text-3xl">Recipe not found</h1>
+        <h1 className="font-semibold tracking-tight text-3xl">Recipe not found</h1>
         <p className="mt-2 text-muted-foreground">
           The link may be wrong or this recipe has been removed.
         </p>
@@ -77,7 +77,7 @@ export function RecipeDetail() {
         {recipe.cuisine && (
           <p className="text-xs uppercase tracking-[0.18em] text-ember-700">{recipe.cuisine}</p>
         )}
-        <h1 className="font-serif text-4xl sm:text-5xl leading-[1.05] tracking-tight">
+        <h1 className="font-semibold text-4xl sm:text-5xl leading-[1.05] tracking-tight">
           {recipe.title}
         </h1>
         {recipe.description && (
@@ -113,7 +113,7 @@ export function RecipeDetail() {
 
       <div className="grid gap-10 md:grid-cols-[260px_1fr]">
         <aside>
-          <h2 className="font-serif text-2xl tracking-tight mb-4">Ingredients</h2>
+          <h2 className="font-semibold text-2xl tracking-tight mb-4">Ingredients</h2>
           <ul className="space-y-2.5">
             {recipe.ingredients.map((ing, i) => (
               <li key={i} className="flex items-start gap-2 text-[15px]">
@@ -130,11 +130,11 @@ export function RecipeDetail() {
         </aside>
 
         <section>
-          <h2 className="font-serif text-2xl tracking-tight mb-4">Steps</h2>
+          <h2 className="font-semibold text-2xl tracking-tight mb-4">Steps</h2>
           <ol className="space-y-5">
             {recipe.steps.map((step, i) => (
               <li key={i} className="flex gap-4">
-                <span className="mt-0.5 grid place-items-center size-8 shrink-0 rounded-full bg-ember-100 text-ember-700 text-sm font-semibold font-serif">
+                <span className="mt-0.5 grid place-items-center size-8 shrink-0 rounded-full bg-ember-100 text-ember-700 text-sm font-semibold tabular-nums">
                   {i + 1}
                 </span>
                 <p className="text-[15.5px] leading-7 text-foreground/90">{step}</p>

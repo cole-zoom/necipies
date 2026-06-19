@@ -28,10 +28,10 @@ export function useAuth() {
     user,
     session,
     loading,
-    signInWithEmail: async (email: string) =>
+    signInWithEmail: async (email: string, returnTo: string = "/cookbook") =>
       supabase.auth.signInWithOtp({
         email,
-        options: { emailRedirectTo: window.location.origin + "/cookbook" },
+        options: { emailRedirectTo: window.location.origin + returnTo },
       }),
     signOut: async () => supabase.auth.signOut(),
   };

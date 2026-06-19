@@ -17,13 +17,13 @@ export function Home() {
             <Sparkles className="size-3.5 text-ember-500" />
             <span>Snap a photo. Get a recipe. Share it with anyone.</span>
           </div>
-          <h1 className="font-serif text-[44px] sm:text-[64px] leading-[1.02] tracking-tight text-foreground">
+          <h1 className="font-semibold text-[44px] sm:text-[64px] leading-[1.02] tracking-tight text-foreground">
             A calm notebook
             <br />
             for the food <em className="not-italic text-ember-600">you cook</em>.
           </h1>
           <p className="mt-5 text-base sm:text-lg text-muted-foreground max-w-xl">
-            Necepies is Notion for recipes. Save your own, browse a curated pantry of public ones,
+            A notebook for recipes. Save your own, browse a curated pantry of public ones,
             and share any of them with a single tap.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
@@ -61,7 +61,7 @@ export function Home() {
             <div className="size-9 grid place-items-center rounded-xl bg-ember-100 text-ember-700 mb-3">
               <f.icon className="size-4" />
             </div>
-            <h3 className="font-serif text-xl text-foreground tracking-tight">{f.title}</h3>
+            <h3 className="font-semibold text-lg text-foreground tracking-tight">{f.title}</h3>
             <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">{f.body}</p>
           </div>
         ))}
@@ -71,7 +71,7 @@ export function Home() {
       <section className="pb-16">
         <div className="flex items-end justify-between mb-6 gap-3">
           <div>
-            <h2 className="font-serif text-2xl sm:text-3xl tracking-tight">Fresh from the pantry</h2>
+            <h2 className="font-semibold text-2xl sm:text-3xl tracking-tight">Fresh from the pantry</h2>
             <p className="text-sm text-muted-foreground">Newly added by the community.</p>
           </div>
           <Button asChild variant="ghost" size="sm">

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { ChefHat, Sparkles } from "lucide-react";
 import type { Recipe } from "@/types/recipe";
 import { Card } from "@/components/ui/card";
 import { DifficultyBadge, HealthBadge, TimeBadge } from "./MetaBadges";
@@ -23,8 +24,12 @@ export function RecipeCard({ recipe }: { recipe: Recipe }) {
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
             />
           ) : (
-            <div className="absolute inset-0 grid place-items-center text-cream-300 font-serif text-5xl">
-              {recipe.title.slice(0, 1)}
+            <div className="absolute inset-0 bg-gradient-to-br from-cream-100 via-cream-50 to-ember-50 grid place-items-center">
+              <div
+                className="grid place-items-center size-14 rounded-2xl bg-background/70 backdrop-blur-sm border border-border/70 text-ember-500 transition-transform duration-500 group-hover:scale-105"
+              >
+                <ChefHat className="size-6" strokeWidth={1.5} />
+              </div>
             </div>
           )}
           {recipe.cuisine && (
@@ -34,10 +39,18 @@ export function RecipeCard({ recipe }: { recipe: Recipe }) {
               </span>
             </div>
           )}
+          {recipe.is_seed && (
+            <div className="absolute top-3 right-3">
+              <span className="inline-flex items-center gap-1 rounded-full bg-ember-100/95 backdrop-blur px-2 py-1 text-[10px] uppercase tracking-wider text-ember-700 border border-ember-200">
+                <Sparkles className="size-2.5" />
+                Featured
+              </span>
+            </div>
+          )}
         </div>
         <div className="p-4 space-y-3">
           <div>
-            <h3 className="font-serif text-[20px] leading-tight tracking-tight text-foreground line-clamp-2 group-hover:text-ember-700 transition-colors">
+            <h3 className="font-semibold text-[18px] leading-tight tracking-tight text-foreground line-clamp-2 group-hover:text-ember-700 transition-colors">
               {recipe.title}
             </h3>
             {recipe.description && (
@@ -51,9 +64,12 @@ export function RecipeCard({ recipe }: { recipe: Recipe }) {
             <DifficultyBadge value={recipe.difficulty} />
             <HealthBadge value={recipe.health_level} />
           </div>
-          {recipe.author_name && (
+          {(recipe.is_seed || recipe.author_name) && (
             <p className="text-[11px] text-muted-foreground/80 pt-1 border-t border-border/60">
-              by <span className="text-foreground/80">{recipe.author_name}</span>
+              by{" "}
+              <span className="text-foreground/80">
+                {recipe.is_seed ? "the Necipies team" : recipe.author_name}
+              </span>
             </p>
           )}
         </div>

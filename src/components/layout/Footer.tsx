@@ -8,7 +8,7 @@ export function Footer() {
         <div className="space-y-3">
           <Logo />
           <p className="text-sm text-muted-foreground max-w-xs">
-            A calm, Notion-style notebook for home-cooked recipes. Capture, organize, and share what you love to cook.
+            A calm notebook for home-cooked recipes. Capture, organize, and share what you love to cook.
           </p>
         </div>
         <div>
@@ -27,14 +27,12 @@ export function Footer() {
           </h4>
           <ul className="space-y-2 text-sm">
             <li><Link className="hover:text-foreground text-muted-foreground" to="/about">About this project</Link></li>
-            <li><a href="https://supabase.com" target="_blank" rel="noreferrer" className="hover:text-foreground text-muted-foreground">Built on Supabase</a></li>
-            <li><a href="https://ai.google.dev/gemini-api" target="_blank" rel="noreferrer" className="hover:text-foreground text-muted-foreground">Powered by Gemini</a></li>
           </ul>
         </div>
       </div>
       <div className="border-t border-border/60">
         <div className="container py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-muted-foreground">
-          <p>© {new Date().getFullYear()} Necepies — a student course project.</p>
+          <p>© {new Date().getFullYear()} Necipies — a student course project.</p>
           <p>Made with care · Designed for cooks.</p>
         </div>
       </div>

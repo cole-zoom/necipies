@@ -5,7 +5,7 @@ export function Logo({ withText = true }: { withText?: boolean }) {
     <Link
       to="/"
       className="flex items-center gap-2 group ring-focus rounded-md"
-      aria-label="Necepies — home"
+      aria-label="Necipies — home"
     >
       <span className="relative inline-flex h-8 w-8 items-center justify-center rounded-lg bg-ember-100 text-ember-700 transition-transform group-hover:-rotate-3">
         <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden>
@@ -24,13 +24,8 @@ export function Logo({ withText = true }: { withText?: boolean }) {
         </svg>
       </span>
       {withText && (
-        <span className="flex items-baseline gap-1">
-          <span className="font-serif text-[22px] leading-none text-foreground tracking-tight">
-            Necepies
-          </span>
-          <span className="hidden sm:inline text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-            cookbook
-          </span>
+        <span className="font-semibold text-[20px] leading-none text-foreground tracking-tight">
+          Necipies
         </span>
       )}
     </Link>

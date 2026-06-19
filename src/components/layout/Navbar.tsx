@@ -53,6 +53,7 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Adjacent navbar buttons all use `default` size (h-10) so heights match. */}
           <Button
             variant="ghost"
             size="icon"
@@ -126,16 +127,16 @@ export function Navbar() {
             </SheetContent>
           </Sheet>
 
-          {/* Desktop user menu */}
+          {/* Desktop user menu — `default` size to match Search + New recipe (h-10). */}
           <div className="hidden md:block">
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="rounded-full pl-1 pr-3">
+                  <Button variant="outline" className="rounded-full pl-1 pr-3 gap-2">
                     <span className="grid place-items-center size-7 rounded-full bg-ember-100 text-ember-700 text-xs font-semibold">
                       {(user.email ?? "?").slice(0, 1).toUpperCase()}
                     </span>
-                    <span className="text-xs truncate max-w-[120px]">{user.email}</span>
+                    <span className="text-sm truncate max-w-[140px]">{user.email}</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
@@ -150,7 +151,7 @@ export function Navbar() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button variant="outline" size="sm" asChild>
+              <Button variant="outline" asChild>
                 <Link to="/signin">Sign in</Link>
               </Button>
             )}

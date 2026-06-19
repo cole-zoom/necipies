@@ -5,17 +5,17 @@ import { Separator } from "@/components/ui/separator";
 export function About() {
   return (
     <div className="container py-12 max-w-2xl prose-ember">
-      <h1 className="font-serif text-4xl tracking-tight">About this project</h1>
+      <h1 className="font-semibold text-4xl tracking-tight">About this project</h1>
       <p className="text-muted-foreground mt-2 leading-relaxed">
-        Necepies is a student course project. It exists so home cooks can keep recipes the way
-        Notion lets you keep notes: searchable, shareable, and yours.
+        Necipies is a student course project. It exists so home cooks can keep recipes the way
+        a good notebook lets you keep notes: searchable, shareable, and yours.
       </p>
 
       <Separator className="my-8" />
 
-      <h2 className="font-serif text-2xl tracking-tight">What we collect</h2>
+      <h2 className="font-semibold text-2xl tracking-tight">What we collect</h2>
       <p className="text-muted-foreground leading-relaxed mt-2">
-        To analyze how people use the app for this course, Necepies loads the following
+        To analyze how people use the app for this course, Necipies loads the following
         privacy-respecting analytics:
       </p>
       <ul className="mt-3 space-y-2 text-foreground/90 list-disc pl-5">
@@ -52,7 +52,7 @@ export function About() {
 
       <Separator className="my-8" />
 
-      <h2 className="font-serif text-2xl tracking-tight">Public by design</h2>
+      <h2 className="font-semibold text-2xl tracking-tight">Public by design</h2>
       <p className="text-muted-foreground leading-relaxed mt-2">
         Every recipe you save is public so it can be shared with a link. Don&rsquo;t add
         anything you would not want a friend (or a curious stranger) to see.
