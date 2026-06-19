@@ -123,10 +123,19 @@ export default async function handler(req: Request): Promise<Response> {
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown extraction error";
-    return new Response(JSON.stringify({ error: message }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    // Surface Gemini's quota/rate-limit errors as 429 so the client can show
+    // a friendly message instead of the raw SDK string.
+    const isRateLimit =
+      /429|RESOURCE_EXHAUSTED|rate limit|quota|Too Many Requests|prepayment credits/i.test(
+        message,
+      );
+    return new Response(
+      JSON.stringify({ error: isRateLimit ? "rate_limited" : message }),
+      {
+        status: isRateLimit ? 429 : 500,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
   }
 }
 

@@ -23,6 +23,11 @@ export async function extractRecipeFromImage(file: File): Promise<ExtractedRecip
   });
 
   if (!res.ok) {
+    if (res.status === 429) {
+      throw new Error(
+        "Hit the Gemini API limit — try again in a few minutes, or fill in the recipe by hand below.",
+      );
+    }
     const msg = await res.text().catch(() => "");
     throw new Error(`Extract failed (${res.status}): ${msg || "unknown error"}`);
   }
