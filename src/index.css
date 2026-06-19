@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Warm Notion-cream paper background; ember (terracotta) accent */
+    --background: 42 35% 98%;
+    --foreground: 24 22% 13%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 24 22% 13%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 24 22% 13%;
+
+    --primary: 16 65% 47%;
+    --primary-foreground: 40 40% 98%;
+
+    --secondary: 36 22% 92%;
+    --secondary-foreground: 24 22% 18%;
+
+    --muted: 36 18% 94%;
+    --muted-foreground: 25 8% 42%;
+
+    --accent: 36 30% 90%;
+    --accent-foreground: 24 22% 13%;
+
+    --destructive: 0 70% 45%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 30 15% 88%;
+    --input: 30 15% 88%;
+    --ring: 16 65% 47%;
+
+    --radius: 0.85rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html,
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv11", "ss01", "ss03";
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply font-sans;
+    min-height: 100dvh;
+  }
+
+  h1, h2, h3, h4 {
+    @apply tracking-tight text-foreground;
+  }
+
+  /* Notion-y subtle paper grain via radial gradient */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(1200px 600px at 90% -10%, rgba(219, 110, 69, 0.06), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, rgba(196, 80, 42, 0.05), transparent 60%);
+    z-index: -1;
+  }
+
+  ::selection {
+    background-color: hsl(var(--primary) / 0.18);
+    color: hsl(var(--foreground));
+  }
+}
+
+@layer components {
+  .display {
+    @apply font-serif tracking-tight;
+    letter-spacing: -0.01em;
+  }
+
+  .ring-focus {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
+
+  .surface {
+    @apply bg-card/80 backdrop-blur-sm border border-border/80 rounded-2xl;
+  }
+}
+
+/* Smooth scroll for in-page anchors */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar utility for horizontal tag scroll on mobile */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+
+/* Safe-area for mobile bottom nav */
+.pb-safe { padding-bottom: max(0.75rem, env(safe-area-inset-bottom)); }
