@@ -11,6 +11,10 @@ interface UseRecipesArgs {
   sort?: RecipeSort;
   /** Exclude seeded/curated recipes (is_seed = true). Used by My Cookbook. */
   excludeSeed?: boolean;
+  /** Only seeded/curated recipes (author_id IS NULL). Used by the home hero. */
+  seedOnly?: boolean;
+  /** Drop rows with a null image_url. */
+  requireImage?: boolean;
 }
 
 function shuffle<T>(arr: T[]): T[] {
@@ -28,6 +32,8 @@ export function useRecipes({
   limit = 60,
   sort = "newest",
   excludeSeed = false,
+  seedOnly = false,
+  requireImage = false,
 }: UseRecipesArgs = {}) {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
@@ -52,6 +58,8 @@ export function useRecipes({
 
       if (authorId) q = q.eq("author_id", authorId);
       if (excludeSeed) q = q.eq("is_seed", false);
+      if (seedOnly) q = q.is("author_id", null);
+      if (requireImage) q = q.not("image_url", "is", null);
       if (search && search.trim()) {
         const term = search.trim().replace(/[%_]/g, "");
         q = q.or(
@@ -74,7 +82,7 @@ export function useRecipes({
     } finally {
       setLoading(false);
     }
-  }, [search, authorId, limit, sort, excludeSeed]);
+  }, [search, authorId, limit, sort, excludeSeed, seedOnly, requireImage]);
 
   useEffect(() => {
     fetchRecipes();
