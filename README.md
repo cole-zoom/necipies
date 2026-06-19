@@ -1,6 +1,6 @@
 # Necepies — Notion for Recipes
 
-A calm, Notion-style notebook for home-cooked recipes. Snap a photo, get a parsed recipe, share with a link.
+Project for MSE 543. Snap a photo, get a parsed recipe, share with a link.
 
 Built with **React + Vite + TypeScript**, **Tailwind + shadcn-style UI**, **Supabase** (Postgres + Auth), and **Gemini** (via a Vercel Edge Function so the API key stays server-side).
 
