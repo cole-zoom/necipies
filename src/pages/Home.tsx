@@ -2,8 +2,14 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, Camera, Search, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { IntroScroll } from "@/components/intro/IntroScroll";
 import { RecipeGrid } from "@/components/recipes/RecipeGrid";
 import { useRecipes } from "@/hooks/useRecipes";
+
+const showIntro =
+  typeof window === "undefined"
+    ? true
+    : !window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
 export function Home() {
   const navigate = useNavigate();
@@ -30,6 +36,7 @@ export function Home() {
 
   return (
     <>
+      {showIntro && <IntroScroll />}
       {/* Hero — full-bleed so the random recipe image replaces the page bg
           for the duration of this section, then fades back to background. */}
       <section className="relative isolate overflow-hidden">
