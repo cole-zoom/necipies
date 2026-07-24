@@ -13,6 +13,10 @@ export function MyCookbook() {
     // Seed/curated rows can leak in if they were inserted with a real author_id
     // (e.g. by a logged-in seed script). My Cookbook is for things YOU added.
     excludeSeed: true,
+    // Only query once we actually know who's signed in. Without this, the
+    // first render (auth still loading, id undefined) would run with no author
+    // filter and pull every user's recipes.
+    enabled: !!user?.id,
   });
 
   if (authLoading) return null;
