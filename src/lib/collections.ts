@@ -1,38 +1,53 @@
-// Editorially curated collections — the honest alternative to a fabricated
-// "Popular" ranking (we have no view/like signal to rank by). Each collection
-// maps to a tag stored in recipes.tags (text[]); membership is set by hand via
-// docs/prd/PRD-4-collections.sql, not by a metric.
+// Curated collections — the honest alternative to a fabricated "Popular"
+// ranking (we have no view/like signal to rank by). These map to the REAL
+// category tags already present on recipes.tags (text[]) from the seed import,
+// so no backfill is needed — the data is already tagged.
+//
+// `tag` must match the stored value EXACTLY (case + punctuation), since the
+// query uses array containment against recipes.tags.
 export interface Collection {
   slug: string; // URL param value: /discover?collection=<slug>
   title: string;
   blurb: string;
-  tag: string; // matched against recipes.tags
+  tag: string; // exact tag stored in recipes.tags
 }
 
 export const COLLECTIONS: Collection[] = [
   {
-    slug: "weeknight-dinners",
-    title: "Weeknight dinners",
-    blurb: "Fast, low-fuss mains for busy evenings.",
-    tag: "weeknight",
+    slug: "desserts",
+    title: "Desserts",
+    blurb: "Cakes, pies, cookies — the sweet end of the pantry.",
+    tag: "Desserts",
   },
   {
-    slug: "comfort-food",
-    title: "Comfort food",
-    blurb: "Warm, cozy, and unapologetically hearty.",
-    tag: "comfort",
+    slug: "breakfast-and-brunch",
+    title: "Breakfast & brunch",
+    blurb: "Slow mornings and lazy weekend plates.",
+    tag: "Breakfast and Brunch",
   },
   {
-    slug: "crowd-pleasers",
-    title: "Crowd-pleasers",
-    blurb: "Sure-thing dishes for a table full of people.",
-    tag: "crowd-pleaser",
+    slug: "salads",
+    title: "Salads",
+    blurb: "Crisp, bright, and veg-forward.",
+    tag: "Salad",
   },
   {
-    slug: "fresh-and-light",
-    title: "Fresh & light",
-    blurb: "Bright, veg-forward plates that don't weigh you down.",
-    tag: "fresh",
+    slug: "soups-and-stews",
+    title: "Soups & stews",
+    blurb: "Big pots of warm, cozy comfort.",
+    tag: "Soups, Stews and Chili",
+  },
+  {
+    slug: "small-bites",
+    title: "Small bites",
+    blurb: "Appetizers, snacks, and things to share.",
+    tag: "Appetizers and Snacks",
+  },
+  {
+    slug: "drinks",
+    title: "Drinks",
+    blurb: "Smoothies, cocktails, and everything to sip.",
+    tag: "Drinks",
   },
 ];
 

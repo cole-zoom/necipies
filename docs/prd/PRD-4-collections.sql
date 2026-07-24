@@ -1,55 +1,27 @@
 -- =====================================================================
--- PRD 4 — assign existing seed recipes to curated collections.
--- Run once in the Supabase SQL editor. Reuses the existing recipes.tags
--- (text[]) column — no schema change needed.
--- Idempotent: each statement only appends a tag if it isn't already present,
--- so it's safe to re-run. Keyword heuristics only — adjust by hand as you like.
--- Collection tags mirror src/lib/collections.ts:
---   weeknight-dinners → 'weeknight'
---   comfort-food      → 'comfort'
---   crowd-pleasers    → 'crowd-pleaser'
---   fresh-and-light   → 'fresh'
+-- PRD 4 — cleanup of the earlier synthetic collection tags.
+--
+-- Collections now map to the REAL category tags already present on
+-- recipes.tags (Desserts, Salad, Drinks, …), so NO backfill is needed.
+--
+-- This script only *removes* the four synthetic tags an earlier draft
+-- appended (weeknight / comfort / crowd-pleaser / fresh) so they don't
+-- linger as orphaned junk. Optional and idempotent — skip it if you don't
+-- mind the extra tags sitting on some rows.
+-- Run once in the Supabase SQL editor.
 -- =====================================================================
 
--- Weeknight dinners: quick, low-fuss mains.
 update public.recipes
-set tags = array_append(coalesce(tags, '{}'), 'weeknight')
-where is_seed = true
-  and not ('weeknight' = any(coalesce(tags, '{}')))
-  and (
-    title ~* '(pasta|stir[- ]?fry|tacos|skillet|sheet[- ]?pan|quick|weeknight|noodle|fried rice)'
-    or (meal_type = 'dinner' and coalesce(prep_time_minutes, 0) + coalesce(cook_time_minutes, 0) <= 40)
-  );
+set tags = (
+  select array_agg(t)
+  from unnest(tags) as t
+  where t not in ('weeknight', 'comfort', 'crowd-pleaser', 'fresh')
+)
+where tags && array['weeknight', 'comfort', 'crowd-pleaser', 'fresh'];
 
--- Comfort food: warm, hearty, indulgent.
-update public.recipes
-set tags = array_append(coalesce(tags, '{}'), 'comfort')
-where is_seed = true
-  and not ('comfort' = any(coalesce(tags, '{}')))
-  and (
-    title ~* '(mac|cheese|stew|roast|casserole|pot pie|meatloaf|lasagna|dumpling|soup|chili|gratin|braise)'
-    or health_level = 'indulgent'
-  );
+-- Note: a row whose ONLY tags were the synthetic four becomes tags = NULL
+-- (array_agg over zero rows returns NULL). That's fine — a null tags column
+-- is valid and simply means "in no collection."
 
--- Crowd-pleasers: dishes that scale to a table.
-update public.recipes
-set tags = array_append(coalesce(tags, '{}'), 'crowd-pleaser')
-where is_seed = true
-  and not ('crowd-pleaser' = any(coalesce(tags, '{}')))
-  and (
-    title ~* '(pizza|lasagna|tacos|burger|wings|nachos|platter|board|bake|pie|cake|dip)'
-    or coalesce(servings, 0) >= 6
-  );
-
--- Fresh & light: bright, veg-forward.
-update public.recipes
-set tags = array_append(coalesce(tags, '{}'), 'fresh')
-where is_seed = true
-  and not ('fresh' = any(coalesce(tags, '{}')))
-  and (
-    title ~* '(salad|bowl|slaw|veg|greens|citrus|herb|grain bowl|wrap|poke|zucchini|cucumber)'
-    or health_level = 'light'
-  );
-
--- Check the result:
+-- Verify the synthetic tags are gone and the real ones remain:
 --   select unnest(tags) as tag, count(*) from public.recipes group by tag order by 2 desc;
