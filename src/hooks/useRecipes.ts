@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import type { MealType, Recipe } from "@/types/recipe";
 
@@ -19,6 +19,13 @@ interface UseRecipesArgs {
   seedOnly?: boolean;
   /** Drop rows with a null image_url. */
   requireImage?: boolean;
+  /**
+   * Gate the query. When false, the hook fetches nothing and returns an empty
+   * list. Used by My Cookbook so it never runs the author filter before the
+   * signed-in user's id is known (which would otherwise fetch every user's
+   * recipes with no filter). Defaults to true.
+   */
+  enabled?: boolean;
 }
 
 function shuffle<T>(arr: T[]): T[] {
@@ -40,12 +47,29 @@ export function useRecipes({
   excludeSeed = false,
   seedOnly = false,
   requireImage = false,
+  enabled = true,
 }: UseRecipesArgs = {}) {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
+  // Monotonic request id: only the most recently started fetch may commit its
+  // result, so a slow earlier response can't overwrite a newer one (stale-
+  // response race, e.g. the auth-loading unfiltered fetch beating the filtered
+  // one in My Cookbook).
+  const reqIdRef = useRef(0);
   const [error, setError] = useState<string | null>(null);
 
   const fetchRecipes = useCallback(async () => {
+    // Bump the request id first so any in-flight fetch's result is discarded.
+    const myReq = ++reqIdRef.current;
+
+    // Disabled: don't hit the network, just present an empty, settled list.
+    if (!enabled) {
+      setRecipes([]);
+      setError(null);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     setError(null);
     try {
@@ -81,16 +105,19 @@ export function useRecipes({
       }
 
       const { data, error: err } = await q;
+      // A newer fetch started while this awaited — drop this stale result.
+      if (myReq !== reqIdRef.current) return;
       if (err) throw err;
       const rows = (data ?? []) as Recipe[];
       setRecipes(sort === "random" ? shuffle(rows) : rows);
     } catch (e) {
+      if (myReq !== reqIdRef.current) return;
       setError(e instanceof Error ? e.message : "Failed to load recipes");
       setRecipes([]);
     } finally {
-      setLoading(false);
+      if (myReq === reqIdRef.current) setLoading(false);
     }
-  }, [search, authorId, limit, sort, mealType, tag, excludeSeed, seedOnly, requireImage]);
+  }, [search, authorId, limit, sort, mealType, tag, excludeSeed, seedOnly, requireImage, enabled]);
 
   useEffect(() => {
     fetchRecipes();
