@@ -100,8 +100,10 @@ export function RecipeForm({ initial }: { initial?: Partial<Recipe> }) {
     source_url: initial?.source_url ?? "",
     author_name: initial?.author_name ?? "",
   });
+  const isEdit = !!initial?.id;
   const [saving, setSaving] = useState(false);
-  const [step, setStep] = useState(0);
+  // When editing, skip the "Start fast" photo step and open on the details.
+  const [step, setStep] = useState(isEdit ? 1 : 0);
   const [errors, setErrors] = useState<StepErrors>({});
   const headingRef = useRef<HTMLHeadingElement>(null);
 
@@ -200,11 +202,11 @@ export function RecipeForm({ initial }: { initial?: Partial<Recipe> }) {
     }
 
     setSaving(true);
-    const baseSlug = slugify(form.title);
-    const slug = `${baseSlug}-${Math.random().toString(36).slice(2, 7)}`;
 
-    const payload = {
-      slug,
+    // Editable fields shared by insert and update. Slug, author, and is_seed
+    // are intentionally NOT here — they're set once at creation and must not
+    // change on edit (keeps shared links stable and ownership intact).
+    const core = {
       title: form.title.trim(),
       description: form.description.trim() || null,
       cuisine: form.cuisine.trim() || null,
@@ -220,14 +222,44 @@ export function RecipeForm({ initial }: { initial?: Partial<Recipe> }) {
       steps: cleanedSteps,
       image_url: form.image_url.trim() || null,
       source_url: form.source_url.trim() || null,
-      author_name: form.author_name.trim() || user?.email?.split("@")[0] || "anonymous chef",
-      author_id: user?.id ?? null,
-      is_seed: false,
     };
 
+    if (isEdit && initial?.id) {
+      // RLS ("Authors can update their own recipes") enforces ownership
+      // server-side; a non-owner's update simply matches zero rows.
+      const { data, error } = await supabase
+        .from("recipes")
+        .update(core)
+        .eq("id", initial.id)
+        .select("slug")
+        .maybeSingle();
+
+      setSaving(false);
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (!data) {
+        toast.error("You can only edit your own recipes.");
+        return;
+      }
+      trackEvent("recipe_updated", { slug: data.slug });
+      toast.success("Changes saved.");
+      navigate(`/r/${data.slug}`);
+      return;
+    }
+
+    const baseSlug = slugify(form.title);
+    const slug = `${baseSlug}-${Math.random().toString(36).slice(2, 7)}`;
     const { data, error } = await supabase
       .from("recipes")
-      .insert(payload)
+      .insert({
+        ...core,
+        slug,
+        author_name: form.author_name.trim() || user?.email?.split("@")[0] || "anonymous chef",
+        author_id: user?.id ?? null,
+        is_seed: false,
+      })
       .select("slug")
       .single();
 
@@ -592,7 +624,7 @@ export function RecipeForm({ initial }: { initial?: Partial<Recipe> }) {
           ) : (
             <Button type="submit" size="lg" disabled={saving}>
               {saving ? <Loader2 className="animate-spin" /> : <Check />}
-              {saving ? "Saving…" : "Save recipe"}
+              {saving ? "Saving…" : isEdit ? "Save changes" : "Save recipe"}
             </Button>
           )}
         </div>
