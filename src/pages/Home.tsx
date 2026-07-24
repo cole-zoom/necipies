@@ -6,6 +6,8 @@ import { IntroScroll } from "@/components/intro/IntroScroll";
 import { FirstVisitPrompt } from "@/components/onboarding/FirstVisitPrompt";
 import { RecipeGrid } from "@/components/recipes/RecipeGrid";
 import { useRecipes } from "@/hooks/useRecipes";
+import { COLLECTIONS } from "@/lib/collections";
+import { trackEvent } from "@/lib/analytics";
 
 const showIntro =
   typeof window === "undefined"
@@ -93,6 +95,34 @@ export function Home() {
       </section>
 
       <div className="container">
+        {/* Curated collections — hand-picked sets, not a fabricated ranking. */}
+        <section className="pt-4 pb-10">
+          <div className="mb-5">
+            <h2 className="font-semibold text-2xl sm:text-3xl tracking-tight">Collections</h2>
+            <p className="text-sm text-muted-foreground">Hand-picked sets to browse by mood.</p>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            {COLLECTIONS.map((c) => (
+              <Link
+                key={c.slug}
+                to={`/discover?collection=${c.slug}`}
+                onClick={() => trackEvent("collection_open", { slug: c.slug })}
+                className="group surface p-4 sm:p-5 flex flex-col justify-between min-h-[124px] hover:shadow-md transition-shadow"
+              >
+                <div>
+                  <h3 className="font-semibold tracking-tight text-foreground group-hover:text-ember-700 transition-colors">
+                    {c.title}
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{c.blurb}</p>
+                </div>
+                <span className="mt-3 inline-flex items-center gap-1 text-xs text-ember-700">
+                  Browse <ArrowRight className="size-3" />
+                </span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
         {/* Recent recipes preview */}
         <section className="pb-16 pt-4">
           <div className="flex items-end justify-between mb-6 gap-3">

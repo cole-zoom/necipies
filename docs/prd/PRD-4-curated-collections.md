@@ -19,10 +19,16 @@ repeat-visit hook the finding wanted — without inventing metrics.
 
 ## Data model
 - Reuse the existing `tags text[]` column (no schema change).
-- A curated `docs/prd/PRD-4-collections.sql` tags seed recipes with collection
-  slugs (best-effort, idempotent `update ... where slug in (...)`).
+- **Revised:** the seed import already populated `tags` with real category
+  tags (`Desserts`, `Salad`, `Drinks`, `Soups, Stews and Chili`, …), so
+  collections map straight onto those — **no backfill needed**. An earlier
+  draft invented four tags and keyword-tagged rows; that turned out redundant
+  and lower-quality (e.g. an over-broad `crowd-pleaser` matched ~800 rows).
+  `docs/prd/PRD-4-collections.sql` is now just an optional cleanup that removes
+  those four synthetic tags.
 - Define collections in code, not the DB, so they're easy to edit/review:
-  `src/lib/collections.ts` → `[{ slug, title, blurb, tag }]`.
+  `src/lib/collections.ts` → `[{ slug, title, blurb, tag }]`, where `tag` is
+  the exact stored category string.
 
 ## UX
 - **Home:** a "Collections" row above/below "Fresh from the pantry" — horizontal
