@@ -101,13 +101,16 @@ export function Home() {
             <h2 className="font-semibold text-2xl sm:text-3xl tracking-tight">Collections</h2>
             <p className="text-sm text-muted-foreground">Hand-picked sets to browse by mood.</p>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          {/* Single row; scrolls horizontally when the cards don't fit. The
+              negative margin + padding lets cards bleed to the screen edge on
+              mobile so the last one doesn't look clipped. */}
+          <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-2 snap-x scroll-px-4 -mx-4 px-4 sm:mx-0 sm:px-0">
             {COLLECTIONS.map((c) => (
               <Link
                 key={c.slug}
                 to={`/discover?collection=${c.slug}`}
                 onClick={() => trackEvent("collection_open", { slug: c.slug })}
-                className="group surface p-4 sm:p-5 flex flex-col justify-between min-h-[124px] hover:shadow-md transition-shadow"
+                className="group surface p-4 sm:p-5 flex flex-col justify-between min-h-[124px] w-52 shrink-0 snap-start hover:shadow-md transition-shadow"
               >
                 <div>
                   <h3 className="font-semibold tracking-tight text-foreground group-hover:text-ember-700 transition-colors">
