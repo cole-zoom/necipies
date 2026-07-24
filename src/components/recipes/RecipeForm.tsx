@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Trash2,
@@ -30,6 +30,15 @@ import {
   type StepErrors,
 } from "./wizard";
 import { WizardProgress } from "./WizardProgress";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
 import {
   MEAL_TYPES,
   MEAL_TYPE_LABEL,
@@ -82,32 +91,63 @@ function FieldError({ msg }: { msg?: string }) {
 export function RecipeForm({ initial }: { initial?: Partial<Recipe> }) {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [form, setForm] = useState<FormState>({
-    ...emptyForm,
-    title: initial?.title ?? "",
-    description: initial?.description ?? "",
-    cuisine: initial?.cuisine ?? "",
-    difficulty: (initial?.difficulty ?? "easy") as Difficulty,
-    health_level: (initial?.health_level ?? "balanced") as HealthLevel,
-    prep_time_minutes: initial?.prep_time_minutes?.toString() ?? "",
-    cook_time_minutes: initial?.cook_time_minutes?.toString() ?? "",
-    servings: initial?.servings?.toString() ?? "",
-    yield_label: initial?.yield_label ?? "",
-    meal_type: (initial?.meal_type ?? "") as MealType | "",
-    ingredients: initial?.ingredients?.length ? initial.ingredients : [""],
-    steps: initial?.steps?.length ? initial.steps : [""],
-    image_url: initial?.image_url ?? "",
-    source_url: initial?.source_url ?? "",
-    author_name: initial?.author_name ?? "",
-  });
+  const initialForm = useMemo<FormState>(
+    () => ({
+      ...emptyForm,
+      title: initial?.title ?? "",
+      description: initial?.description ?? "",
+      cuisine: initial?.cuisine ?? "",
+      difficulty: (initial?.difficulty ?? "easy") as Difficulty,
+      health_level: (initial?.health_level ?? "balanced") as HealthLevel,
+      prep_time_minutes: initial?.prep_time_minutes?.toString() ?? "",
+      cook_time_minutes: initial?.cook_time_minutes?.toString() ?? "",
+      servings: initial?.servings?.toString() ?? "",
+      yield_label: initial?.yield_label ?? "",
+      meal_type: (initial?.meal_type ?? "") as MealType | "",
+      ingredients: initial?.ingredients?.length ? initial.ingredients : [""],
+      steps: initial?.steps?.length ? initial.steps : [""],
+      image_url: initial?.image_url ?? "",
+      source_url: initial?.source_url ?? "",
+      author_name: initial?.author_name ?? "",
+    }),
+    [initial],
+  );
+  const [form, setForm] = useState<FormState>(initialForm);
   const isEdit = !!initial?.id;
   const [saving, setSaving] = useState(false);
   // When editing, skip the "Start fast" photo step and open on the details.
   const [step, setStep] = useState(isEdit ? 1 : 0);
   const [errors, setErrors] = useState<StepErrors>({});
+  const [discardOpen, setDiscardOpen] = useState(false);
   const headingRef = useRef<HTMLHeadingElement>(null);
 
   const meta = WIZARD_STEPS[step];
+
+  // "Dirty" = the form differs from what we opened with. Drives the discard
+  // confirmation and the tab-close guard so edits are never lost silently.
+  const dirty = useMemo(
+    () => JSON.stringify(form) !== JSON.stringify(initialForm),
+    [form, initialForm],
+  );
+  const cancelTo = initial?.slug ? `/r/${initial.slug}` : "/cookbook";
+
+  const handleCancel = () => {
+    if (dirty) setDiscardOpen(true);
+    else navigate(cancelTo);
+  };
+
+  // Warn on real browser navigation (tab close / reload / external link) while
+  // there are unsaved changes. In-app navigation (Cancel, Save) doesn't unload
+  // the page, so this never fires on those.
+  useEffect(() => {
+    if (!dirty) return;
+    const onBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => window.removeEventListener("beforeunload", onBeforeUnload);
+  }, [dirty]);
 
   // Move focus (and the viewport) to the step heading on every step change so
   // keyboard and screen-reader users land at the top of the new step.
@@ -606,15 +646,24 @@ export function RecipeForm({ initial }: { initial?: Partial<Recipe> }) {
       {/* Sticky nav footer — Back / Next share one size variant (lg). */}
       <div className="sticky bottom-20 md:bottom-6 z-10">
         <div className="surface shadow-xl px-4 py-3 flex items-center justify-between gap-3">
-          {step > 0 ? (
-            <Button type="button" variant="outline" size="lg" onClick={back}>
-              <ChevronLeft /> Back
-            </Button>
-          ) : (
-            <p className="text-xs text-muted-foreground">
-              Step {step + 1} of {WIZARD_STEPS.length}
-            </p>
-          )}
+          <div className="flex items-center gap-2">
+            {isEdit && (
+              <Button type="button" variant="ghost" size="lg" onClick={handleCancel}>
+                Cancel
+              </Button>
+            )}
+            {step > 0 ? (
+              <Button type="button" variant="outline" size="lg" onClick={back}>
+                <ChevronLeft /> Back
+              </Button>
+            ) : (
+              !isEdit && (
+                <p className="text-xs text-muted-foreground">
+                  Step {step + 1} of {WIZARD_STEPS.length}
+                </p>
+              )
+            )}
+          </div>
 
           {step < LAST_STEP ? (
             <Button type="button" size="lg" onClick={next}>
@@ -629,6 +678,27 @@ export function RecipeForm({ initial }: { initial?: Partial<Recipe> }) {
           )}
         </div>
       </div>
+
+      <Dialog open={discardOpen} onOpenChange={setDiscardOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Discard changes?</DialogTitle>
+            <DialogDescription>
+              Your unsaved edits to this recipe will be lost. This can&rsquo;t be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" variant="outline">
+                Keep editing
+              </Button>
+            </DialogClose>
+            <Button type="button" variant="destructive" onClick={() => navigate(cancelTo)}>
+              Discard changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </form>
   );
 }
