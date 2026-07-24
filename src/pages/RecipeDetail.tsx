@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { ShareButton } from "@/components/recipes/ShareButton";
+import { RecipeOwnerActions } from "@/components/recipes/RecipeOwnerActions";
 import {
   DifficultyBadge,
   HealthBadge,
@@ -71,7 +72,10 @@ export function RecipeDetail() {
             <ArrowLeft /> All recipes
           </Link>
         </Button>
-        <ShareButton title={recipe.title} slug={recipe.slug} />
+        <div className="flex items-center gap-2">
+          <RecipeOwnerActions recipe={recipe} />
+          <ShareButton title={recipe.title} slug={recipe.slug} />
+        </div>
       </div>
 
       <header className="space-y-4 animate-fade-in">

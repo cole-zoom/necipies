@@ -9,6 +9,7 @@ import { Home } from "@/pages/Home";
 import { Discover } from "@/pages/Discover";
 import { RecipeDetail } from "@/pages/RecipeDetail";
 import { NewRecipe } from "@/pages/NewRecipe";
+import { EditRecipe } from "@/pages/EditRecipe";
 import { MyCookbook } from "@/pages/MyCookbook";
 import { SignIn } from "@/pages/SignIn";
 import { About } from "@/pages/About";
@@ -39,6 +40,7 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/discover" element={<Discover />} />
             <Route path="/r/:slug" element={<RecipeDetail />} />
+            <Route path="/r/:slug/edit" element={<EditRecipe />} />
             <Route path="/new" element={<NewRecipe />} />
             <Route path="/cookbook" element={<MyCookbook />} />
             <Route path="/signin" element={<SignIn />} />
