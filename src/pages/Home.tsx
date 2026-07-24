@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, Camera, Search, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { IntroScroll } from "@/components/intro/IntroScroll";
+import { FirstVisitPrompt } from "@/components/onboarding/FirstVisitPrompt";
 import { RecipeGrid } from "@/components/recipes/RecipeGrid";
 import { useRecipes } from "@/hooks/useRecipes";
 
@@ -108,6 +109,8 @@ export function Home() {
           <RecipeGrid recipes={recipes} loading={loading} />
         </section>
       </div>
+
+      <FirstVisitPrompt />
     </>
   );
 }
