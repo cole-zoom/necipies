@@ -12,9 +12,9 @@ import {
 import { RecipeGrid } from "@/components/recipes/RecipeGrid";
 import { SearchBar } from "@/components/recipes/SearchBar";
 import { useRecipes, type RecipeSort } from "@/hooks/useRecipes";
+import { MEAL_TYPES, MEAL_TYPE_LABEL, type MealType } from "@/types/recipe";
+import { cn } from "@/lib/utils";
 import { trackEvent } from "@/lib/analytics";
-
-const POPULAR = ["Pasta", "Chicken", "Vegetarian", "Dessert", "Soup", "Salad"];
 
 const SORT_LABEL: Record<RecipeSort, string> = {
   random: "Random",
@@ -29,6 +29,20 @@ export function Discover() {
   const [sort, setSort] = useState<RecipeSort>(
     (params.get("sort") as RecipeSort) || "random",
   );
+  const mealParam = params.get("meal");
+  const meal: MealType | null = MEAL_TYPES.includes(mealParam as MealType)
+    ? (mealParam as MealType)
+    : null;
+
+  const setMeal = (next: MealType | null) => {
+    if (next) {
+      params.set("meal", next);
+      trackEvent("filter_meal_type", { value: next });
+    } else {
+      params.delete("meal");
+    }
+    setParams(params, { replace: true });
+  };
 
   // Debounce search → query
   const [debounced, setDebounced] = useState(initial);
@@ -56,6 +70,7 @@ export function Discover() {
     search: debounced,
     limit: 60,
     sort,
+    mealType: meal ?? undefined,
   });
   const autoFocus = useMemo(() => params.get("focus") === "1", []);
 
@@ -69,15 +84,34 @@ export function Discover() {
         <div className="mt-5">
           <SearchBar value={search} onChange={setSearch} autoFocus={autoFocus} />
         </div>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {POPULAR.map((p) => (
+        <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label="Filter by meal">
+          <button
+            type="button"
+            onClick={() => setMeal(null)}
+            aria-pressed={meal === null}
+            className={cn(
+              "text-xs px-2.5 py-1 rounded-full border transition-colors",
+              meal === null
+                ? "border-ember-300 bg-ember-100 text-ember-700 font-medium"
+                : "border-border bg-card/60 hover:bg-accent text-foreground/80",
+            )}
+          >
+            All meals
+          </button>
+          {MEAL_TYPES.map((m) => (
             <button
-              key={p}
+              key={m}
               type="button"
-              onClick={() => setSearch(p.toLowerCase())}
-              className="text-xs px-2.5 py-1 rounded-full border border-border bg-card/60 hover:bg-accent text-foreground/80"
+              onClick={() => setMeal(meal === m ? null : m)}
+              aria-pressed={meal === m}
+              className={cn(
+                "text-xs px-2.5 py-1 rounded-full border transition-colors",
+                meal === m
+                  ? "border-ember-300 bg-ember-100 text-ember-700 font-medium"
+                  : "border-border bg-card/60 hover:bg-accent text-foreground/80",
+              )}
             >
-              {p}
+              {MEAL_TYPE_LABEL[m]}
             </button>
           ))}
         </div>

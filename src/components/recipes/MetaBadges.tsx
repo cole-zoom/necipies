@@ -1,7 +1,21 @@
-import { Clock, ChefHat, Leaf, Users } from "lucide-react";
+import { Clock, ChefHat, Leaf, Users, Utensils } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import type { Difficulty, HealthLevel } from "@/types/recipe";
+import {
+  MEAL_TYPE_LABEL,
+  type Difficulty,
+  type HealthLevel,
+  type MealType,
+} from "@/types/recipe";
 import { formatMinutes } from "@/lib/utils";
+
+export function MealTypeBadge({ value }: { value?: MealType | null }) {
+  if (!value) return null;
+  return (
+    <Badge variant="muted">
+      <Utensils className="size-3" /> {MEAL_TYPE_LABEL[value]}
+    </Badge>
+  );
+}
 
 export function DifficultyBadge({ value }: { value: Difficulty }) {
   const map: Record<Difficulty, { label: string; variant: "green" | "amber" | "rose" }> = {
