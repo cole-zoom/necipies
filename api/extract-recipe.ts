@@ -27,6 +27,10 @@ const RECIPE_SCHEMA = {
     cook_time_minutes: { type: SchemaType.INTEGER },
     servings: { type: SchemaType.INTEGER },
     yield_label: { type: SchemaType.STRING },
+    meal_type: {
+      type: SchemaType.STRING,
+      enum: ["breakfast", "lunch", "dinner", "snack", "dessert"],
+    },
     ingredients: {
       type: SchemaType.ARRAY,
       items: { type: SchemaType.STRING },
@@ -51,6 +55,7 @@ Rules:
 - "steps" are concise, imperative instructions, one per array entry, no leading numbers.
 - "difficulty" is your best estimate from ingredient count and technique: easy / medium / hard.
 - "health_level": light = vegetable-forward + lean protein + low added fat/sugar; balanced = mixed; indulgent = high in butter/sugar/fried/cheesy.
+- "meal_type" is the occasion the dish best fits: breakfast / lunch / dinner / snack / dessert. Omit only if genuinely ambiguous.
 - Times in MINUTES (integers). If a range is given, take the midpoint. Omit if truly unknown.
 - If the image clearly isn't a recipe, return a best-effort title of "Untitled recipe" and empty ingredient/step arrays.
 

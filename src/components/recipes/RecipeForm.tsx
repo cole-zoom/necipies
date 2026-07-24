@@ -30,12 +30,19 @@ import {
   type StepErrors,
 } from "./wizard";
 import { WizardProgress } from "./WizardProgress";
-import type {
-  Difficulty,
-  ExtractedRecipe,
-  HealthLevel,
-  Recipe,
+import {
+  MEAL_TYPES,
+  MEAL_TYPE_LABEL,
+  type Difficulty,
+  type ExtractedRecipe,
+  type HealthLevel,
+  type MealType,
+  type Recipe,
 } from "@/types/recipe";
+
+// Radix Select forbids empty-string item values, so "Any" uses this sentinel
+// and maps to "" (→ null on insert) at the boundary.
+const MEAL_ANY = "any";
 import { supabase } from "@/lib/supabase";
 import { slugify } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
@@ -86,6 +93,7 @@ export function RecipeForm({ initial }: { initial?: Partial<Recipe> }) {
     cook_time_minutes: initial?.cook_time_minutes?.toString() ?? "",
     servings: initial?.servings?.toString() ?? "",
     yield_label: initial?.yield_label ?? "",
+    meal_type: (initial?.meal_type ?? "") as MealType | "",
     ingredients: initial?.ingredients?.length ? initial.ingredients : [""],
     steps: initial?.steps?.length ? initial.steps : [""],
     image_url: initial?.image_url ?? "",
@@ -133,6 +141,7 @@ export function RecipeForm({ initial }: { initial?: Partial<Recipe> }) {
         r.cook_time_minutes?.toString() ?? f.cook_time_minutes,
       servings: r.servings?.toString() ?? f.servings,
       yield_label: r.yield_label ?? f.yield_label,
+      meal_type: r.meal_type ?? f.meal_type,
       ingredients: r.ingredients?.length ? r.ingredients : f.ingredients,
       steps: r.steps?.length ? r.steps : f.steps,
     }));
@@ -205,6 +214,7 @@ export function RecipeForm({ initial }: { initial?: Partial<Recipe> }) {
       cook_time_minutes: form.cook_time_minutes ? Number(form.cook_time_minutes) : null,
       servings: form.servings ? Number(form.servings) : null,
       yield_label: form.yield_label.trim() || null,
+      meal_type: form.meal_type || null,
       ingredients: cleanedIngredients,
       ingredients_text: cleanedIngredients.join(" • "),
       steps: cleanedSteps,
@@ -393,7 +403,7 @@ export function RecipeForm({ initial }: { initial?: Partial<Recipe> }) {
         {/* Step 4 — Details (all optional) */}
         {step === 4 && (
           <section className="grid gap-4">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label>Cuisine</Label>
                 <Input
@@ -402,6 +412,30 @@ export function RecipeForm({ initial }: { initial?: Partial<Recipe> }) {
                   placeholder="Italian, Thai…"
                 />
               </div>
+              <div className="space-y-1.5">
+                <Label>Meal type</Label>
+                <Select
+                  value={form.meal_type || MEAL_ANY}
+                  onValueChange={(v) =>
+                    setForm({ ...form, meal_type: v === MEAL_ANY ? "" : (v as MealType) })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={MEAL_ANY}>Any / unspecified</SelectItem>
+                    {MEAL_TYPES.map((m) => (
+                      <SelectItem key={m} value={m}>
+                        {MEAL_TYPE_LABEL[m]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-3">
               <div className="space-y-1.5">
                 <Label>Servings</Label>
                 <Input
@@ -498,6 +532,7 @@ export function RecipeForm({ initial }: { initial?: Partial<Recipe> }) {
 
               <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
                 {form.cuisine.trim() && <span>{form.cuisine.trim()}</span>}
+                {form.meal_type && <span>{MEAL_TYPE_LABEL[form.meal_type]}</span>}
                 <span>{DIFFICULTY_LABEL[form.difficulty]}</span>
                 <span>{HEALTH_LABEL[form.health_level]}</span>
                 {form.servings && <span>{form.servings} servings</span>}

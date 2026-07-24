@@ -8,6 +8,7 @@ import { ShareButton } from "@/components/recipes/ShareButton";
 import {
   DifficultyBadge,
   HealthBadge,
+  MealTypeBadge,
   ServingsBadge,
   TimeBadge,
 } from "@/components/recipes/MetaBadges";
@@ -87,6 +88,7 @@ export function RecipeDetail() {
         )}
         <div className="flex flex-wrap items-center gap-2 pt-1">
           <TimeBadge minutes={total} />
+          <MealTypeBadge value={recipe.meal_type} />
           <DifficultyBadge value={recipe.difficulty} />
           <HealthBadge value={recipe.health_level} />
           <ServingsBadge value={recipe.servings} />

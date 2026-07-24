@@ -21,6 +21,7 @@ create table if not exists public.recipes (
   cook_time_minutes int,
   servings         int,
   yield_label      text,
+  meal_type        text check (meal_type in ('breakfast','lunch','dinner','snack','dessert')),
   ingredients      jsonb not null default '[]'::jsonb,
   ingredients_text text,
   steps            jsonb not null default '[]'::jsonb,
@@ -34,7 +35,14 @@ create table if not exists public.recipes (
   updated_at       timestamptz not null default now()
 );
 
+-- meal_type: added via alter too, so existing databases (where the create
+-- table above is a no-op) pick up the column. Idempotent.
+alter table public.recipes
+  add column if not exists meal_type text
+  check (meal_type in ('breakfast','lunch','dinner','snack','dessert'));
+
 create index if not exists recipes_created_at_idx on public.recipes (created_at desc);
+create index if not exists recipes_meal_type_idx  on public.recipes (meal_type);
 create index if not exists recipes_author_idx     on public.recipes (author_id);
 create index if not exists recipes_title_trgm     on public.recipes using gin (title gin_trgm_ops);
 create index if not exists recipes_ingredients_trgm on public.recipes using gin (ingredients_text gin_trgm_ops);

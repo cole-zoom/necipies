@@ -1,5 +1,22 @@
 export type Difficulty = "easy" | "medium" | "hard";
 export type HealthLevel = "light" | "balanced" | "indulgent";
+export type MealType = "breakfast" | "lunch" | "dinner" | "snack" | "dessert";
+
+export const MEAL_TYPES: MealType[] = [
+  "breakfast",
+  "lunch",
+  "dinner",
+  "snack",
+  "dessert",
+];
+
+export const MEAL_TYPE_LABEL: Record<MealType, string> = {
+  breakfast: "Breakfast",
+  lunch: "Lunch",
+  dinner: "Dinner",
+  snack: "Snack",
+  dessert: "Dessert",
+};
 
 export interface Recipe {
   id: string;
@@ -13,6 +30,7 @@ export interface Recipe {
   cook_time_minutes: number | null;
   servings: number | null;
   yield_label: string | null;
+  meal_type: MealType | null;
   ingredients: string[];
   steps: string[];
   tags: string[] | null;
@@ -43,6 +61,7 @@ export interface ExtractedRecipe {
   cook_time_minutes?: number;
   servings?: number;
   yield_label?: string;
+  meal_type?: MealType;
   ingredients: string[];
   steps: string[];
   tags?: string[];

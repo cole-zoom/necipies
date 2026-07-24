@@ -1,4 +1,4 @@
-import type { Difficulty, HealthLevel } from "@/types/recipe";
+import type { Difficulty, HealthLevel, MealType } from "@/types/recipe";
 
 // The wizard keeps ONE flat form object (below) and only swaps which slice is
 // rendered per step, so stepping back and forth never drops entered data.
@@ -12,6 +12,8 @@ export interface FormState {
   cook_time_minutes: string;
   servings: string;
   yield_label: string;
+  // "" means unspecified / "Any" — stored as null on insert.
+  meal_type: MealType | "";
   ingredients: string[];
   steps: string[];
   image_url: string;
@@ -29,6 +31,7 @@ export const emptyForm: FormState = {
   cook_time_minutes: "",
   servings: "",
   yield_label: "",
+  meal_type: "",
   ingredients: [""],
   steps: [""],
   image_url: "",

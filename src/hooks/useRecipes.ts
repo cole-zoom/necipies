@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import type { Recipe } from "@/types/recipe";
+import type { MealType, Recipe } from "@/types/recipe";
 
 export type RecipeSort = "newest" | "random" | "az";
 
@@ -9,6 +9,8 @@ interface UseRecipesArgs {
   authorId?: string | null;
   limit?: number;
   sort?: RecipeSort;
+  /** Narrow to a single meal occasion. */
+  mealType?: MealType;
   /** Exclude seeded/curated recipes (is_seed = true). Used by My Cookbook. */
   excludeSeed?: boolean;
   /** Only seeded/curated recipes (author_id IS NULL). Used by the home hero. */
@@ -31,6 +33,7 @@ export function useRecipes({
   authorId,
   limit = 60,
   sort = "newest",
+  mealType,
   excludeSeed = false,
   seedOnly = false,
   requireImage = false,
@@ -57,6 +60,7 @@ export function useRecipes({
         .limit(limit);
 
       if (authorId) q = q.eq("author_id", authorId);
+      if (mealType) q = q.eq("meal_type", mealType);
       if (excludeSeed) q = q.eq("is_seed", false);
       if (seedOnly) q = q.is("author_id", null);
       if (requireImage) q = q.not("image_url", "is", null);
@@ -82,7 +86,7 @@ export function useRecipes({
     } finally {
       setLoading(false);
     }
-  }, [search, authorId, limit, sort, excludeSeed, seedOnly, requireImage]);
+  }, [search, authorId, limit, sort, mealType, excludeSeed, seedOnly, requireImage]);
 
   useEffect(() => {
     fetchRecipes();
