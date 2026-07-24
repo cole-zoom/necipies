@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Shuffle } from "lucide-react";
+import { Shuffle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -13,6 +13,7 @@ import { RecipeGrid } from "@/components/recipes/RecipeGrid";
 import { SearchBar } from "@/components/recipes/SearchBar";
 import { useRecipes, type RecipeSort } from "@/hooks/useRecipes";
 import { MEAL_TYPES, MEAL_TYPE_LABEL, type MealType } from "@/types/recipe";
+import { getCollection } from "@/lib/collections";
 import { cn } from "@/lib/utils";
 import { trackEvent } from "@/lib/analytics";
 
@@ -44,6 +45,12 @@ export function Discover() {
     setParams(params, { replace: true });
   };
 
+  const collection = getCollection(params.get("collection"));
+  const clearCollection = () => {
+    params.delete("collection");
+    setParams(params, { replace: true });
+  };
+
   // Debounce search → query
   const [debounced, setDebounced] = useState(initial);
   useEffect(() => {
@@ -71,6 +78,7 @@ export function Discover() {
     limit: 60,
     sort,
     mealType: meal ?? undefined,
+    tag: collection?.tag,
   });
   const autoFocus = useMemo(() => params.get("focus") === "1", []);
 
@@ -116,6 +124,23 @@ export function Discover() {
           ))}
         </div>
       </div>
+
+      {collection && (
+        <div className="mb-4 flex items-center gap-2 animate-fade-in">
+          <span className="inline-flex items-center gap-2 rounded-full border border-ember-300 bg-ember-100 px-3 py-1 text-sm text-ember-700">
+            Collection: <span className="font-medium">{collection.title}</span>
+            <button
+              type="button"
+              onClick={clearCollection}
+              aria-label={`Clear ${collection.title} collection`}
+              className="grid place-items-center size-4 rounded-full hover:bg-ember-200"
+            >
+              <X className="size-3" />
+            </button>
+          </span>
+          <span className="text-sm text-muted-foreground hidden sm:inline">{collection.blurb}</span>
+        </div>
+      )}
 
       <div className="flex items-center justify-between gap-3 mb-5">
         <p className="text-sm text-muted-foreground">

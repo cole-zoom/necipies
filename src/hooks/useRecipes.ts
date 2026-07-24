@@ -11,6 +11,8 @@ interface UseRecipesArgs {
   sort?: RecipeSort;
   /** Narrow to a single meal occasion. */
   mealType?: MealType;
+  /** Narrow to recipes whose tags[] contains this tag (curated collections). */
+  tag?: string;
   /** Exclude seeded/curated recipes (is_seed = true). Used by My Cookbook. */
   excludeSeed?: boolean;
   /** Only seeded/curated recipes (author_id IS NULL). Used by the home hero. */
@@ -34,6 +36,7 @@ export function useRecipes({
   limit = 60,
   sort = "newest",
   mealType,
+  tag,
   excludeSeed = false,
   seedOnly = false,
   requireImage = false,
@@ -61,6 +64,7 @@ export function useRecipes({
 
       if (authorId) q = q.eq("author_id", authorId);
       if (mealType) q = q.eq("meal_type", mealType);
+      if (tag) q = q.contains("tags", [tag]);
       if (excludeSeed) q = q.eq("is_seed", false);
       if (seedOnly) q = q.is("author_id", null);
       if (requireImage) q = q.not("image_url", "is", null);
@@ -86,7 +90,7 @@ export function useRecipes({
     } finally {
       setLoading(false);
     }
-  }, [search, authorId, limit, sort, mealType, excludeSeed, seedOnly, requireImage]);
+  }, [search, authorId, limit, sort, mealType, tag, excludeSeed, seedOnly, requireImage]);
 
   useEffect(() => {
     fetchRecipes();
